@@ -83,7 +83,7 @@ export default function Home() {
               Upload documents
             </p>
             <p className="text-xs text-slate-400 mt-1">
-              PDF or TXT files
+            TXT files
             </p>
 
             <input
