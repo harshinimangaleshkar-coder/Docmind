@@ -2,15 +2,11 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import fs from "fs";
-import path from "path";
+import { redis } from "@/lib/redis";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
-
-// use /tmp (important fix)
-const filePath = path.join("/tmp", "data.json");
 
 function chunkText(text: string, chunkSize = 500, overlap = 200) {
   const chunks: string[] = [];
@@ -37,11 +33,12 @@ export async function POST(req: Request) {
       );
     }
 
+    // 🔑 Get existing data from Redis
     let existingData: any[] = [];
+    const stored = await redis.get("docmind");
 
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, "utf-8");
-      existingData = JSON.parse(fileContent || "[]");
+    if (stored) {
+      existingData = stored as any[];
     }
 
     for (const file of files) {
@@ -52,19 +49,18 @@ export async function POST(req: Request) {
       const chunks = chunkText(text);
 
       const embeddings: number[][] = [];
+      const batchSize = 20;
 
-const batchSize = 20; // safe size
+      for (let i = 0; i < chunks.length; i += batchSize) {
+        const batch = chunks.slice(i, i + batchSize);
 
-for (let i = 0; i < chunks.length; i += batchSize) {
-  const batch = chunks.slice(i, i + batchSize);
+        const response = await openai.embeddings.create({
+          model: "text-embedding-3-small",
+          input: batch,
+        });
 
-  const response = await openai.embeddings.create({
-    model: "text-embedding-3-small",
-    input: batch,
-  });
-
-  response.data.forEach((e) => embeddings.push(e.embedding));
-}
+        response.data.forEach((e) => embeddings.push(e.embedding));
+      }
 
       chunks.forEach((chunk, i) => {
         existingData.push({
@@ -75,7 +71,8 @@ for (let i = 0; i < chunks.length; i += batchSize) {
       });
     }
 
-    fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
+    // 🔑 Save to Redis
+    await redis.set("docmind", existingData);
 
     return NextResponse.json({
       message: "Documents processed successfully",
