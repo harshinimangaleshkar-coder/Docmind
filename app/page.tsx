@@ -46,6 +46,14 @@ export default function Home() {
     setLoading(false);
   };
 
+  const suggestedQuestions = [
+    "What is DocMind?",
+    "What are the key features?",
+    "What models are used?",
+    "Who can use this product?",
+    "What are the limitations?",
+  ];
+
   return (
     <main className="h-screen bg-slate-50 flex flex-col">
 
@@ -55,7 +63,7 @@ export default function Home() {
           DocMind
         </h1>
         <span className="text-xs text-slate-400">
-          Knowledge Assistant
+          AI Knowledge Assistant
         </span>
       </div>
 
@@ -72,10 +80,10 @@ export default function Home() {
           {/* Upload */}
           <label className="flex flex-col items-center justify-center border border-dashed border-slate-300 rounded-xl p-6 cursor-pointer hover:bg-slate-50 transition">
             <p className="text-sm font-medium text-slate-700">
-              Upload files
+              Upload documents
             </p>
             <p className="text-xs text-slate-400 mt-1">
-              PDF, TXT
+              PDF or TXT files
             </p>
 
             <input
@@ -87,6 +95,16 @@ export default function Home() {
               }
             />
           </label>
+
+          {/* Demo vs Custom Guidance */}
+          <div className="mt-4 text-xs text-slate-500 leading-relaxed">
+            <p className="mb-2">
+              🚀 <span className="font-medium text-slate-700">Try demo:</span> Upload the demo file and use suggested questions below.
+            </p>
+            <p>
+              📄 <span className="font-medium text-slate-700">Or upload your own:</span> Ask anything about your document.
+            </p>
+          </div>
 
           {/* Selected Files */}
           {files.length > 0 && (
@@ -135,10 +153,10 @@ export default function Home() {
               <div className="h-full flex items-center justify-center text-center">
                 <div>
                   <h3 className="text-lg font-medium text-slate-700">
-                    Ask anything about your docs
+                    Ask questions about your documents
                   </h3>
                   <p className="text-sm text-slate-400 mt-1">
-                    Your answers will appear here
+                    Upload a document and start exploring insights instantly
                   </p>
                 </div>
               </div>
@@ -153,22 +171,42 @@ export default function Home() {
             )}
           </div>
 
-          {/* INPUT */}
-          <div className="border-t bg-white p-4 flex gap-3">
+          {/* INPUT + SUGGESTED */}
+          <div className="border-t bg-white p-4">
 
-            <input
-              className="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Ask a question..."
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-            />
+            {/* Suggested Questions */}
+            <p className="text-xs text-slate-400 mb-2">
+              Suggested questions (for demo file)
+            </p>
 
-            <button
-              onClick={askQuestion}
-              className="bg-indigo-600 text-white px-6 rounded-xl text-sm font-medium hover:bg-indigo-700 transition"
-            >
-              Ask
-            </button>
+            <div className="mb-3 flex flex-wrap gap-2">
+              {suggestedQuestions.map((q) => (
+                <button
+                  key={q}
+                  onClick={() => setQuestion(q)}
+                  className="text-xs px-3 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 transition"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+
+            {/* Input */}
+            <div className="flex gap-3">
+              <input
+                className="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Ask a question..."
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+
+              <button
+                onClick={askQuestion}
+                className="bg-indigo-600 text-white px-6 rounded-xl text-sm font-medium hover:bg-indigo-700 transition"
+              >
+                Ask
+              </button>
+            </div>
 
           </div>
 
