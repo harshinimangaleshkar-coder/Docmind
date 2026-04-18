@@ -43,37 +43,38 @@ export default function Home() {
   };
 
   return (
-    <main className="h-screen bg-gradient-to-br from-orange-50 to-white flex flex-col">
+    <main className="h-screen bg-slate-50 flex flex-col">
 
       {/* HEADER */}
-      <div className="px-8 py-4 flex justify-between items-center border-b border-orange-100">
-        <h1 className="text-2xl font-bold text-slate-900">
+      <div className="px-8 py-4 flex justify-between items-center border-b bg-white">
+        <h1 className="text-xl font-semibold text-slate-900">
           DocMind
         </h1>
-        <p className="text-sm text-slate-500">
-          AI-powered knowledge retrieval
-        </p>
+        <span className="text-xs text-slate-400">
+          Knowledge Assistant
+        </span>
       </div>
 
-      {/* MAIN SPLIT */}
+      {/* MAIN */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* LEFT PANEL (UPLOAD / KNOWLEDGE) */}
-        <div className="w-1/3 border-r border-orange-100 p-6 flex flex-col">
+        {/* SIDEBAR */}
+        <div className="w-80 bg-white border-r p-5 flex flex-col">
 
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">
+          <h2 className="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">
             Knowledge Base
           </h2>
 
-          <label className="flex flex-col items-center justify-center border-2 border-dashed border-orange-300 rounded-lg p-6 cursor-pointer hover:bg-orange-50 transition">
+          {/* Upload Box */}
+          <label className="flex flex-col items-center justify-center border border-dashed border-slate-300 rounded-xl p-6 cursor-pointer hover:bg-slate-50 transition">
 
-            <div className="text-sm font-medium text-slate-700">
-              Upload documents
-            </div>
+            <p className="text-sm font-medium text-slate-700">
+              Upload files
+            </p>
 
-            <div className="text-xs text-slate-500 mt-1">
-              PDF or TXT files
-            </div>
+            <p className="text-xs text-slate-400 mt-1">
+              PDF, TXT
+            </p>
 
             <input
               type="file"
@@ -83,33 +84,45 @@ export default function Home() {
                 setFiles(Array.from(e.target.files || []))
               }
             />
-
           </label>
 
+          {/* Selected Files */}
           {files.length > 0 && (
-            <ul className="mt-4 text-sm text-slate-700 space-y-1">
-              {files.map((file) => (
-                <li key={file.name}>• {file.name}</li>
-              ))}
-            </ul>
+            <div className="mt-4">
+              <p className="text-xs text-slate-400 mb-2">Selected</p>
+              <ul className="space-y-1 text-sm">
+                {files.map((file) => (
+                  <li
+                    key={file.name}
+                    className="truncate text-slate-700"
+                  >
+                    {file.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
+          {/* Upload Button */}
           <button
             onClick={handleUpload}
-            className="mt-4 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"
+            className="mt-4 bg-slate-900 text-white py-2 rounded-lg text-sm hover:bg-slate-800 transition"
           >
-            {loading ? "Indexing..." : "Index Knowledge"}
+            {loading ? "Indexing..." : "Index Documents"}
           </button>
 
-          {/* Indexed docs */}
+          {/* Indexed Docs */}
           {uploadedDocs.length > 0 && (
             <div className="mt-6">
-              <p className="text-sm font-semibold text-slate-800 mb-2">
-                Indexed
-              </p>
-              <ul className="text-sm text-slate-600 space-y-1">
+              <p className="text-xs text-slate-400 mb-2">Indexed</p>
+              <ul className="space-y-1 text-sm">
                 {uploadedDocs.map((doc) => (
-                  <li key={doc}>• {doc}</li>
+                  <li
+                    key={doc}
+                    className="truncate text-slate-600"
+                  >
+                    {doc}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -117,41 +130,48 @@ export default function Home() {
 
         </div>
 
-        {/* RIGHT PANEL (Q&A) */}
-        <div className="flex-1 flex flex-col p-6">
+        {/* CHAT AREA */}
+        <div className="flex-1 flex flex-col">
 
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">
-            Ask Questions
-          </h2>
-
-          {/* ANSWER AREA */}
-          <div className="flex-1 bg-white border border-slate-200 rounded-lg p-4 overflow-y-auto">
+          {/* Chat Window */}
+          <div className="flex-1 overflow-y-auto p-8">
 
             {!answer ? (
-              <p className="text-slate-400 text-sm">
-                Ask a question to see results...
-              </p>
+              <div className="h-full flex items-center justify-center text-center">
+                <div>
+                  <h3 className="text-lg font-medium text-slate-700">
+                    Ask anything about your docs
+                  </h3>
+                  <p className="text-sm text-slate-400 mt-1">
+                    Your answers will appear here
+                  </p>
+                </div>
+              </div>
             ) : (
-              <p className="text-slate-800 leading-relaxed">
-                {answer}
-              </p>
+              <div className="max-w-3xl">
+                <div className="bg-white p-5 rounded-xl border shadow-sm">
+                  <p className="text-slate-800 leading-relaxed">
+                    {answer}
+                  </p>
+                </div>
+              </div>
             )}
 
           </div>
 
           {/* INPUT */}
-          <div className="mt-4 flex gap-3">
+          <div className="border-t bg-white p-4 flex gap-3">
 
             <input
-              className="flex-1 border border-slate-300 rounded-lg p-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-400"
-              placeholder="Ask something about your documents..."
+              className="flex-1 border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              placeholder="Ask a question..."
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
 
             <button
               onClick={askQuestion}
-              className="bg-orange-500 text-white px-6 rounded-lg hover:bg-orange-600 transition"
+              className="bg-indigo-600 text-white px-5 rounded-lg text-sm hover:bg-indigo-700 transition"
             >
               Ask
             </button>
