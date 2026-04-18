@@ -1,3 +1,4 @@
+```tsx
 "use client";
 
 import { useState } from "react";
@@ -35,6 +36,9 @@ export default function Home() {
     const res = await fetch("/api/query", {
       method: "POST",
       body: JSON.stringify({ question }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     const data = await res.json();
@@ -65,13 +69,11 @@ export default function Home() {
             Knowledge Base
           </h2>
 
-          {/* Upload Box */}
+          {/* Upload */}
           <label className="flex flex-col items-center justify-center border border-dashed border-slate-300 rounded-xl p-6 cursor-pointer hover:bg-slate-50 transition">
-
             <p className="text-sm font-medium text-slate-700">
               Upload files
             </p>
-
             <p className="text-xs text-slate-400 mt-1">
               PDF, TXT
             </p>
@@ -92,10 +94,7 @@ export default function Home() {
               <p className="text-xs text-slate-400 mb-2">Selected</p>
               <ul className="space-y-1 text-sm">
                 {files.map((file) => (
-                  <li
-                    key={file.name}
-                    className="truncate text-slate-700"
-                  >
+                  <li key={file.name} className="truncate text-slate-700">
                     {file.name}
                   </li>
                 ))}
@@ -117,23 +116,19 @@ export default function Home() {
               <p className="text-xs text-slate-400 mb-2">Indexed</p>
               <ul className="space-y-1 text-sm">
                 {uploadedDocs.map((doc) => (
-                  <li
-                    key={doc}
-                    className="truncate text-slate-600"
-                  >
+                  <li key={doc} className="truncate text-slate-600">
                     {doc}
                   </li>
                 ))}
               </ul>
             </div>
           )}
-
         </div>
 
         {/* CHAT AREA */}
         <div className="flex-1 flex flex-col">
 
-          {/* Chat Window */}
+          {/* ANSWER AREA */}
           <div className="flex-1 overflow-y-auto p-8">
 
             {!answer ? (
@@ -150,20 +145,19 @@ export default function Home() {
             ) : (
               <div className="max-w-3xl">
                 <div className="bg-white p-5 rounded-xl border shadow-sm">
-                  <p className="text-slate-800 leading-relaxed">
+                  <p className="text-slate-900 leading-relaxed">
                     {answer}
                   </p>
                 </div>
               </div>
             )}
-
           </div>
 
           {/* INPUT */}
           <div className="border-t bg-white p-4 flex gap-3">
 
             <input
-              className="flex-1 border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Ask a question..."
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
@@ -171,7 +165,7 @@ export default function Home() {
 
             <button
               onClick={askQuestion}
-              className="bg-indigo-600 text-white px-5 rounded-lg text-sm hover:bg-indigo-700 transition"
+              className="bg-indigo-600 text-white px-6 rounded-xl text-sm font-medium hover:bg-indigo-700 transition"
             >
               Ask
             </button>
@@ -185,3 +179,4 @@ export default function Home() {
     </main>
   );
 }
+```
