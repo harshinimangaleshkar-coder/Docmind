@@ -2,15 +2,11 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import fs from "fs";
-import path from "path";
+import { redis } from "@/lib/redis";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
-
-// same /tmp path
-const filePath = path.join(process.cwd(), "data.json");
 
 function cosineSimilarity(a: number[], b: number[]) {
   const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
@@ -31,12 +27,10 @@ export async function POST(req: Request) {
       );
     }
 
-    let store: any[] = [];
+    // 🔑 Get from Redis
+    const store = (await redis.get("docmind")) as any[] || [];
 
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, "utf-8");
-      store = JSON.parse(fileContent || "[]");
-    }
+    console.log("Store size:", store.length);
 
     if (!store.length) {
       return NextResponse.json({
@@ -68,14 +62,13 @@ export async function POST(req: Request) {
         {
           role: "system",
           content: `
-You are a helpful support assistant.
+You are a helpful assistant.
 
-Use the provided documentation to answer the question clearly.
+Use ONLY the provided documentation.
 
-If the answer is partially available, try your best to respond using the closest relevant information.
-
-Only say "I don't know" if the information is completely missing.
-`, },
+If answer is not found, say "I don't know".
+`,
+        },
         {
           role: "user",
           content: `Documentation:\n${context}\n\nQuestion: ${question}`,
