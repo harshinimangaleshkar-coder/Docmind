@@ -10,7 +10,7 @@ const openai = new OpenAI({
 });
 
 // same /tmp path
-const filePath = path.join("/tmp", "data.json");
+const filePath = path.join(process.cwd(), "data.json");
 
 function cosineSimilarity(a: number[], b: number[]) {
   const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
